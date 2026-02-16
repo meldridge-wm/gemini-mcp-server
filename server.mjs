@@ -8,6 +8,10 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  ListToolsRequestSchema,
+  CallToolRequestSchema
+} from '@modelcontextprotocol/sdk/types.js';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
@@ -21,7 +25,7 @@ const server = new Server(
   { capabilities: { tools: {} } }
 );
 
-server.setRequestHandler('tools/list', async () => ({
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
       name: 'gemini',
@@ -54,7 +58,7 @@ server.setRequestHandler('tools/list', async () => ({
   ]
 }));
 
-server.setRequestHandler('tools/call', async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name !== 'gemini') {
     return { content: [{ type: 'text', text: `Unknown tool: ${request.params.name}` }], isError: true };
   }
